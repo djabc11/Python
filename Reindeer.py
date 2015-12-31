@@ -87,7 +87,9 @@ def calculateWRWTrip(destinations):
         origin = destinations[0]
         destination = destinations[1]
         giftWRW = calculateWRW([origin[1],origin[2]],[destination[1],destination[2]],currentSleightWeight(destinations))
+        print(giftWRW)
         tripWRW = tripWRW + giftWRW
+        del destinations[0]
     return tripWRW
 
 def currentSleightWeight(destinations):
@@ -116,8 +118,10 @@ def haversine(lat1, lon1, lat2, lon2):
 print(haversine(90,0,100,10))
 print(calculateWRW([90,0],[100,10],1))
 
-giftArray = [[77,24.2,76.12,50]]
+giftArray = [[0,90,0,0]]
+giftArray.append([77,24.2,76.12,50])
 giftArray.append([118,39.67,51.77,50])
+giftArray.append([0,90,0,0])
 
 
 print(calculateWRWTrip(giftArray))
