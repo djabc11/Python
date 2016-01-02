@@ -1,12 +1,18 @@
 
+from __future__ import division
+
 import sys
-print(sys.path)
+#print(sys.path)
 
 
 import numpy as np
 from statsmodels import api as sm
 
 from math import radians, cos, sin, asin, sqrt
+
+import csv
+
+
 
 """
 y = [1,2,3,4,3,4,5,4,5,5,4,5,4,5,4,5,6,5,4,5,4,3,4]
@@ -165,7 +171,10 @@ def sortDestinations(destinations):
         
 
     #print(sortedDestinations)    
-    print(calculateWRWTrip(sortedDestinations))
+    #print(calculateWRWTrip(sortedDestinations))
+    destinations = sortedDestinations
+    #return calculateWRWTrip(sortedDestinations)
+    return sortedDestinations
     """
     take origin
     iterate through options (ignoring last one which is final destination). for each one, take haversine*(totalWeight-weight)
@@ -196,9 +205,7 @@ giftArray.append([0,90,0,0])
 print(calculateWRWTrip(giftArray))
 print(currentSleightWeight(giftArray))
 """
-print(calculateWRWTrip(giftArray))
-print("how about now")
-print(sortDestinations(giftArray))
+
 
 
 giftArray2 = [[0,90,0,0,-1]]
@@ -217,15 +224,56 @@ for line in open('gifts.csv'):
 del giftArray2[0] #remove dummy     
 #print(len(giftArray2))
 
+masterGiftArray = giftArray2.copy()
+masterGiftArraySorted = [[0,0]]
+
 giftArray3 = giftArray2.copy()
-del giftArray3[20:len(giftArray3)]
+del giftArray3[100:len(giftArray3)]
 giftArray3.append([0,90,0,0])
 #print(len(giftArray3))
 
-print(giftArray3)
-print(calculateWRWTrip(giftArray3))
-print("how about now")
-print(sortDestinations(giftArray3))
+masterGiftArray1000 = masterGiftArray[0:1000];
+masterGiftArray1000.append([0,90,0,0,-1])
+
+#masterGiftArray1000 = sortDestinations(masterGiftArray1000)
+
+
+finalWRW = 0
+for i in range(0,len(masterGiftArray)//20):
+    
+    tempArray = masterGiftArray[i*20:(i+1)*20]
+    tempArray.insert(0,[0,90,0,0,-1])
+    tempArray.append([0,90,0,0,-1])
+    #print(sortDestinations(tempArray))
+    tempArray = sortDestinations(tempArray)
+    finalWRW = finalWRW + calculateWRWTrip(tempArray)
+    for j in tempArray:
+        if(j[0] != 0):
+            masterGiftArraySorted.append([int(j[0]),i+1])
+
+del masterGiftArraySorted[0]
+
+print(finalWRW)
+
+
+
+#print(masterGiftArraySorted)
+#loop for every 20
+#sort
+#put into master array
+
+
+
+with open("output.csv", "w") as f:
+    writer = csv.writer(f)
+    for i in masterGiftArraySorted:
+        writer.writerow(i)
+
+"""
+with open("output.csv", "wb") as f:
+    writer = csv.writer(f)
+    writer.writerows(masterGiftArraySorted)
+"""
 
 
 
