@@ -105,7 +105,18 @@ def calculateWRWTrip(destinations):
     return tripWRW
 
 def currentSleightWeight(destinations):
+    
     totalWeight = 10;
+    """destinationsToListPre = np.array(destinations)
+    print("blah")
+    destinationsToList = destinationsToListPre.ravel()
+    print("blah 2")
+    destinationsToList = destinationsToList[3:]
+    print("blah 3")
+    destinationsToCount = [float(i) for i in destinationsToList[::5]]
+    print("blah 4")
+    return sum(destinationsToCount)
+    """
     for i in destinations:
         totalWeight = totalWeight + i[3]
     return totalWeight
@@ -126,38 +137,50 @@ def haversine(lat1, lon1, lat2, lon2):
     r = 6371 # Radius of earth in kilometers. Use 3956 for miles
     return c * r
 
-def findNextDestination(destinations):
+def findNextDestination(destinations,withWeight):
     origin = destinations[0]
-    totalWeight = currentSleightWeight(destinations)
-    minValue = 1000000000
+    if (withWeight == 0):
+        totalWeight = 100
+    else:
+        totalWeight = currentSleightWeight(destinations)
+    minValue = 1000000000000
     minID = 0
-    for i in range(1,len(destinations) - 1):
+    maxRange = len(destinations) - 1
+
+    if (len(destinations) > 400):
+        maxRange = 300 #list is sorted by latitude. chances are next closest one will be among the next 10000
+    for i in range(1,maxRange):
         destination= destinations[i]
         destinationWeight = destination[3]
         thisValue = haversine(origin[1],origin[2],destination[1],destination[2])*(totalWeight-destinationWeight)
+
         #print(destination[0])
         #print("is")
         #print(haversine(origin[1],origin[2],destination[1],destination[2]))
         #print(totalWeight-destinationWeight)
+
         if (thisValue < minValue):
             minValue = thisValue
             minID = destination[0]
-
- 
+    if (len(destinations) % 100 == 0):
+        print(len(destinations))
     return minID    
 
 
-def sortDestinations(destinations):
+def sortDestinations(destinations,withWeight):
     remainingDestinations = destinations.copy()
     sortedDestinations = [[]]
     sortedDestinations.append(remainingDestinations[0]) 
     del sortedDestinations[0]
     for j in range(0,len(remainingDestinations)-1):
-        nextOne = findNextDestination(remainingDestinations)
+        nextOne = findNextDestination(remainingDestinations,withWeight)
         #print(remainingDestinations)
         #print(nextOne)
         indexOfNextOne = -1
-        for i in range(0,len(remainingDestinations)):
+        maxRange = len(remainingDestinations) 
+        if (len(remainingDestinations) > 400):
+            maxRange = 300
+        for i in range(0,maxRange):
             
             if (remainingDestinations[i][0] == nextOne):
                 sortedDestinations.append(remainingDestinations[i])
@@ -227,25 +250,27 @@ del giftArray2[0] #remove dummy
 masterGiftArray = giftArray2.copy()
 masterGiftArraySorted = [[0,0]]
 
-giftArray3 = giftArray2.copy()
-del giftArray3[100:len(giftArray3)]
-giftArray3.append([0,90,0,0])
-#print(len(giftArray3))
 
-masterGiftArray1000 = masterGiftArray[0:1000];
-masterGiftArray1000.append([0,90,0,0,-1])
 
-#masterGiftArray1000 = sortDestinations(masterGiftArray1000)
+
+#masterGiftArray10000 = masterGiftArray[0:10000];
+#masterGiftArray10000.append([0,90,0,0,-1])
+
+#masterGiftArray10000 = sortDestinations(masterGiftArray10000)
+
+masterGiftArray.append([0,90,0,0,-1])
+masterGiftArray = sortDestinations(masterGiftArray,0) #if all of them were in one trip- this is a close to optimal path
 
 
 finalWRW = 0
-for i in range(0,len(masterGiftArray)//20):
+initialTripSize = 40
+for i in range(0,len(masterGiftArray)//initialTripSize):
     
-    tempArray = masterGiftArray[i*20:(i+1)*20]
+    tempArray = masterGiftArray[i*initialTripSize:(i+1)*initialTripSize]
     tempArray.insert(0,[0,90,0,0,-1])
     tempArray.append([0,90,0,0,-1])
     #print(sortDestinations(tempArray))
-    tempArray = sortDestinations(tempArray)
+    tempArray = sortDestinations(tempArray,1)
     finalWRW = finalWRW + calculateWRWTrip(tempArray)
     for j in tempArray:
         if(j[0] != 0):
@@ -264,7 +289,7 @@ print(finalWRW)
 
 
 
-with open("output.csv", "w") as f:
+with open("output2.csv", "w") as f:
     writer = csv.writer(f)
     for i in masterGiftArraySorted:
         writer.writerow(i)
