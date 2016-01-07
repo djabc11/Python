@@ -97,8 +97,9 @@ def calculateWRWTrip(destinations):
         destination = destinationsCopy[1]
         #print(origin)
         #print(destination)
-        giftWRW = calculateWRW([origin[1],origin[2]],[destination[1],destination[2]],currentSleightWeight(destinationsCopy))
         
+        giftWRW = calculateWRW([origin[1],origin[2]],[destination[1],destination[2]],currentSleightWeight(destinationsCopy))
+        print(giftWRW)
         #print(giftWRW)
         tripWRW = tripWRW + giftWRW
         del destinationsCopy[0]
@@ -208,6 +209,45 @@ print(haversine(90,0,100,10))
 print(calculateWRW([90,0],[100,10],1))
 """
 
+def clusterIntoHalf(destinations):
+    #create box from all points
+    xMin = 1000
+    xMax = -1000
+    yMin = 1000
+    yMax = -1000
+
+    for (i in destinations):
+        currentLat = i[1]
+        currentLon = i[2]
+
+
+        #put into array ordered by X:
+        #look at current array. find middle value. if this one has X greater, examine top. else bottom. rinse and repeat
+
+        a = len(destinationsX)
+        minRange = 0
+        maxRange = a
+        success = 0
+        while (success == 0):
+            middleArrayValue = destinationsX[(maxRange+midRange)/2]
+            middleLonValue = middleArrayValue[2]
+            if ()
+
+        #put into array ordered by Y
+        if (currentLat < yMin):
+            yMin = currentLat
+        if (currentLat > yMax):
+            yMax = currentLat
+        if (currentLon < xMin):
+            xMin = currentLon
+        if (currentLon > xMax):
+            xMax = currentLon
+    if ((yMax - yMin) > (xMax - xMin)):
+        #cut on Y axis
+
+    else:
+        #cut on X axis
+
 giftArray = [[0,90,0,0]]
 """giftArray.append([77,24.2,76.12,50])
 giftArray.append([118,39.67,51.77,50])"""
@@ -263,7 +303,7 @@ masterGiftArray = sortDestinations(masterGiftArray,0) #if all of them were in on
 
 
 finalWRW = 0
-initialTripSize = 40
+initialTripSize = 50
 for i in range(0,len(masterGiftArray)//initialTripSize):
     
     tempArray = masterGiftArray[i*initialTripSize:(i+1)*initialTripSize]
@@ -272,8 +312,12 @@ for i in range(0,len(masterGiftArray)//initialTripSize):
     #print(sortDestinations(tempArray))
     tempArray = sortDestinations(tempArray,1)
     finalWRW = finalWRW + calculateWRWTrip(tempArray)
+    print(calculateWRWTrip(tempArray))
+    print(currentSleightWeight(tempArray))
+    print(tempArray)
     for j in tempArray:
         if(j[0] != 0):
+            
             masterGiftArraySorted.append([int(j[0]),i+1])
 
 del masterGiftArraySorted[0]
@@ -299,6 +343,7 @@ with open("output.csv", "wb") as f:
     writer = csv.writer(f)
     writer.writerows(masterGiftArraySorted)
 """
+
 
 
 
