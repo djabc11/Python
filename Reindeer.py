@@ -216,22 +216,61 @@ def clusterIntoHalf(destinations):
     yMin = 1000
     yMax = -1000
 
+    destinationsX = [[]]
+    destinationsY = [[]]
+
+    del destinationsX[0]
+    del destinationsY[0]
+
     for (i in destinations):
         currentLat = i[1]
         currentLon = i[2]
 
+        
 
         #put into array ordered by X:
         #look at current array. find middle value. if this one has X greater, examine top. else bottom. rinse and repeat
 
         a = len(destinationsX)
         minRange = 0
-        maxRange = a
+        maxRange = a-1
         success = 0
+
+        #a few conditions to watch out for:
+
+        if (a == 0): #empty array, insert first record
+            destinationsX.insert(maxRange,i)
+            success = 1
+
+        #if less than min, insert in place 0
+        minArrayValue = destinationsX[0]
+        minLonValue = middleArrayValue[2]
+        if (currentLon < minLonValue):
+            destinationsX.insert(0,i)
+            success = 1
+
+        #if greater than max, append
+        maxArrayValue = destinationsX[maxRange]
+        maxLonValue = maxArrayValue[2]
+        if (currentLon > maxLonValue):
+            destinationsX.append(i)
+            success = 1
+
+
         while (success == 0):
-            middleArrayValue = destinationsX[(maxRange+midRange)/2]
-            middleLonValue = middleArrayValue[2]
-            if ()
+            if (maxRange - minRange == 1):
+                destinationsX.insert(maxRange,i) #insert destination at index of maxRange
+                success = 1 #whoo!
+            else:
+                middleIndex = (maxRange+minrange)/2
+                middleArrayValue = destinationsX[middleIndex]
+                middleLonValue = middleArrayValue[2]
+                if (currentLon >= middleLonValue):
+                    minRange = middleIndex
+                else:
+                    maxRange = middleIndex
+            
+
 
         #put into array ordered by Y
         if (currentLat < yMin):
